@@ -9,6 +9,11 @@
  *   2. semua timer dan listener dicatat agar bisa dilepas;
  *   3. elemen DOM dan <style> memakai id tetap, dihapus sebelum dibuat ulang;
  *   4. tidak ada state global lain selain registri tersebut.
+ *
+ *  PERLINDUNGAN: modul hanya berjalan jika loader resmi di XML sudah memverifikasi lisensi
+ *  (window.AMI_UPD_RT.state === 'ACTIVE'). Jika berkas ini disalin dari repositori dan dipasang
+ *  tanpa loader/lisensi, modul tidak berfungsi dan menampilkan peringatan. Ini penghalang, bukan
+ *  anti-salin mutlak: kode di browser selalu dapat diubah orang yang bertekad.
  */
 (function (W, D) {
   'use strict';
@@ -32,12 +37,27 @@
 
   function dispose() {
     gone = 1;
+    var w = byId('ami-lic-warn'); if (w && w.getAttribute('data-by') === NAME && w.parentNode) w.parentNode.removeChild(w);
     timers.forEach(clearTimeout); timers = [];
     offs.forEach(function (f) { f(); }); offs = [];
     drop('ami-upd-toast'); drop('ami-upd-css');
     if (REG[NAME] && REG[NAME].dispose === dispose) delete REG[NAME];
   }
   REG[NAME] = { version: VER, dispose: dispose };
+
+  var RT = W.AMI_UPD_RT, SITE = 'https://ami.sch.id';
+  if (!RT || RT.state !== 'ACTIVE') {
+    if (!byId('ami-lic-warn') && D.body) {
+      var d = D.createElement('div'), a = D.createElement('a');
+      d.id = 'ami-lic-warn'; d.setAttribute('data-by', NAME); d.setAttribute('role', 'alert');
+      d.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:2147483000;padding:10px 14px;background:#b71c1c;color:#fff;font:600 14px/1.4 system-ui,sans-serif;text-align:center';
+      d.appendChild(D.createTextNode('Template ini belum berlisensi untuk situs ini. Silakan hubungi '));
+      a.href = SITE; a.target = '_blank'; a.rel = 'noopener'; a.style.cssText = 'color:#fff;text-decoration:underline'; a.textContent = 'ami.sch.id';
+      d.appendChild(a); d.appendChild(D.createTextNode(' untuk membeli secara resmi.'));
+      D.body.appendChild(d);
+    }
+    return;
+  }
 
   // Hanya beranda polos. Halaman label/pencarian/artikel tidak diperiksa (menghindari false positive).
   if (location.pathname !== '/' || location.search) return;
