@@ -1,20 +1,3 @@
-/*! ami-update 1.0.0 | min_xml_version 6.1.0
- *  Modul pertama untuk sistem pembaruan AMI.
- *  Fungsi: memberi tahu pembaca beranda bahwa ada artikel baru tanpa harus menutup dan membuka lagi.
- *
- *  ATURAN MODUL (wajib): aman dieksekusi dua kali.
- *  Ketika nomor versi berganti saat halaman masih terbuka, loader memasang <script> baru dan
- *  berkas ini dijalankan ulang. Karena itu:
- *   1. eksekusi sebelumnya di-dispose dulu lewat registri window.AMI_MODS[NAME];
- *   2. semua timer dan listener dicatat agar bisa dilepas;
- *   3. elemen DOM dan <style> memakai id tetap, dihapus sebelum dibuat ulang;
- *   4. tidak ada state global lain selain registri tersebut.
- *
- *  PERLINDUNGAN: modul hanya berjalan jika loader resmi di XML sudah memverifikasi lisensi
- *  (window.AMI_UPD_RT.state === 'ACTIVE'). Jika berkas ini disalin dari repositori dan dipasang
- *  tanpa loader/lisensi, modul tidak berfungsi dan menampilkan peringatan. Ini penghalang, bukan
- *  anti-salin mutlak: kode di browser selalu dapat diubah orang yang bertekad.
- */
 (function (W, D) {
   'use strict';
   var NAME = 'ami-update', VER = '1.0.0', POLL = 180000;
