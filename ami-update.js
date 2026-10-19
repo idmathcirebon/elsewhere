@@ -1,9 +1,8 @@
+/*! ami-update 1.0.1 | min_xml_version 6.1.0 */
 (function (W, D) {
   'use strict';
-  var NAME = 'ami-update', VER = '1.0.0', POLL = 180000;
+  var NAME = 'ami-update', VER = '1.0.1', POLL = 180000;
   var REG = W.AMI_MODS = W.AMI_MODS || {};
-
-  // (1) bersihkan eksekusi sebelumnya
   if (REG[NAME] && typeof REG[NAME].dispose === 'function') {
     try { REG[NAME].dispose(); } catch (e) {}
   }
@@ -34,15 +33,13 @@
       var d = D.createElement('div'), a = D.createElement('a');
       d.id = 'ami-lic-warn'; d.setAttribute('data-by', NAME); d.setAttribute('role', 'alert');
       d.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:2147483000;padding:10px 14px;background:#b71c1c;color:#fff;font:600 14px/1.4 system-ui,sans-serif;text-align:center';
-      d.appendChild(D.createTextNode('Template ini belum berlisensi untuk situs ini. Silakan hubungi '));
+      d.appendChild(D.createTextNode('Template ini belum memiliki lisensi aktif untuk situs ini. Silakan hubungi '));
       a.href = SITE; a.target = '_blank'; a.rel = 'noopener'; a.style.cssText = 'color:#fff;text-decoration:underline'; a.textContent = 'ami.sch.id';
       d.appendChild(a); d.appendChild(D.createTextNode(' untuk membeli secara resmi.'));
       D.body.appendChild(d);
     }
     return;
   }
-
-  // Hanya beranda polos. Halaman label/pencarian/artikel tidak diperiksa (menghindari false positive).
   if (location.pathname !== '/' || location.search) return;
 
   var id = (D.documentElement.lang || '').toLowerCase().indexOf('id') === 0;
@@ -94,8 +91,6 @@
         var p = path(l.href);
         if (!p || p === seen) return;
         var hasList = D.querySelector('#main .index-post');
-        // Pengecekan pertama: bandingkan dengan daftar artikel di halaman (HTML bisa basi).
-        // Pengecekan berikutnya: cukup lihat apakah artikel terbaru berubah.
         if (first ? (hasList && !inList(p)) : true) toast(e.title && e.title.$t);
         seen = p; first = 0;
       })
